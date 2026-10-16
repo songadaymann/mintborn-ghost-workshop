@@ -1,6 +1,6 @@
 # Mintborn ghost workshop
 
-Interactive 3D ghost trait editor and a browsable draft collection of 10,000 ghosts. This is a standalone snapshot of Mintborn's ghost study from September 28, 2026, published for sharing.
+Interactive 3D ghost trait editor and a browsable draft collection of 10,000 ghosts. This is a standalone snapshot of Mintborn's ghost study from September 28, 2026, published for sharing. The workshop keeps the expanded fabrics, expressions and accessories on the original sheet-01 body; body variations are disabled throughout the editor, collection and exported recipes.
 
 Live URL: https://mintborn-ghost-workshop.novox-robot.workers.dev
 

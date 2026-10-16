@@ -1,6 +1,6 @@
-import { ACCESSORY_COLORS, GLASSES, HATS, MARKINGS } from './catalog.js?v=tailored-06c';
+import { ACCESSORY_COLORS, GLASSES, HATS, MARKINGS } from './catalog.js?v=classic-body-01';
 // v4 palette/family lists are a superset of v3, so one ordering serves both drafts.
-import { COLOR_FAMILIES_V4 as COLOR_FAMILIES, PALETTES_V4 as PALETTES } from './catalog-v4.js?v=ghost-v4a';
+import { COLOR_FAMILIES_V4 as COLOR_FAMILIES, PALETTES_V4 as PALETTES } from './catalog-v4.js?v=classic-body-01';
 
 const byId = rows => new Map(rows.map((row, index) => [row.id, { ...row, index }]));
 const palettes = byId(PALETTES), families = byId(COLOR_FAMILIES);

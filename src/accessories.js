@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
-import { buildExpandedHat, buildExpandedGlasses } from './accessories-expanded.js?v=tailored-06c';
+import { buildExpandedHat, buildExpandedGlasses } from './accessories-expanded.js?v=classic-body-01';
 
 // Art revision is independent of the trait catalogue: saved Ghosts keep their identities.
 export const ACCESSORY_ART_VERSION = 'tailored-06';

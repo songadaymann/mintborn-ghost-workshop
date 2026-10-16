@@ -1,10 +1,10 @@
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
-import { Ghost } from './ghost.js?v=tailored-06c';
-import { HATS, GLASSES, MARKINGS, compatible, hatFraming } from './catalog.js?v=tailored-06c';
-// v4 (2026-09-28): body, expression and the wider cloth catalog. ?ghost=N shows the v4 draft.
+import { Ghost } from './ghost.js?v=classic-body-01';
+import { HATS, GLASSES, MARKINGS, compatible, hatFraming } from './catalog.js?v=classic-body-01';
+// Expanded cloth and expressions on the original body. ?ghost=N shows the shared draft.
 import { PALETTES_V4 as PALETTES, COLOR_FAMILIES_V4 as COLOR_FAMILIES, recipeFromPaletteV4 as recipeFromPalette, generateCollectionV4 as generateCollection,
-  HEMS, STANCES, ARMS, EXPRESSIONS, framingV4 } from './catalog-v4.js?v=ghost-v4a';
+  EXPRESSIONS, framingV4 } from './catalog-v4.js?v=classic-body-01';
 
 export const DEBUG_OPTIONS = { metrics: true, logFrames: false };
 const params = new URLSearchParams(location.search);
@@ -61,7 +61,7 @@ let currentIndex = Math.max(0, Math.min(9999, (Number.isInteger(requestedNumber)
 function options(id, rows) {
   field(id).replaceChildren(...rows.map(row => { const o=document.createElement('option');o.value=row.id;o.textContent=row.label;return o; }));
 }
-options('hem',HEMS);options('stance',STANCES);options('arms',ARMS);options('expression',EXPRESSIONS);
+options('expression',EXPRESSIONS);
 options('hat',HATS);options('glasses',GLASSES);options('marking',MARKINGS);
 options('palette',[{id:'custom',label:'Custom'},...PALETTES]);
 for (const family of COLOR_FAMILIES) {
@@ -71,7 +71,7 @@ for (const family of COLOR_FAMILIES) {
 }
 function syncFields() {
   const {pattern,colors,hat,glasses,marking,markColor,markScale,accessoryColor}=ghost.traits;
-  field('pattern').value=pattern;for(const k of ['hem','stance','arms','expression'])field(k).value=ghost.traits[k];field('hat').value=hat;field('glasses').value=glasses;field('marking').value=marking;
+  field('pattern').value=pattern;field('expression').value=ghost.traits.expression;field('hat').value=hat;field('glasses').value=glasses;field('marking').value=marking;
   ['color-a','color-b','color-c'].forEach((id,i)=>field(id).value=colors[i]);
   field('mark-color').value=markColor;field('mark-scale').value=markScale;field('accessory-color').value=accessoryColor;
   field('marked-controls').hidden=marking==='none';
@@ -91,7 +91,7 @@ function edit(patch) {
   if(patch.hat&&!compatible(patch.hat,ghost.traits.glasses))patch.glasses='none';
   ghost.setTraits(patch);syncFields();
 }
-for(const id of ['pattern','hat','glasses','marking','hem','stance','arms','expression'])field(id).addEventListener('change',()=>edit({[id]:field(id).value}));
+for(const id of ['pattern','hat','glasses','marking','expression'])field(id).addEventListener('change',()=>edit({[id]:field(id).value}));
 field('palette').addEventListener('change',()=>{if(field('palette').value!=='custom')edit(recipeFromPalette(field('palette').value));});
 for(const id of ['color-a','color-b','color-c'])field(id).addEventListener('input',()=>edit({colors:['color-a','color-b','color-c'].map(key=>field(key).value)}));
 field('mark-color').addEventListener('input',()=>edit({markColor:field('mark-color').value}));
@@ -212,7 +212,7 @@ const textileLooks = {
 };
 if (textileLooks[params.get('look')]) ghost.setTraits(textileLooks[params.get('look')]);
 if (PALETTES.some(p => p.id === params.get('palette'))) ghost.setTraits(recipeFromPalette(params.get('palette')));
-for (const [key, list] of [['hat', HATS], ['glasses', GLASSES], ['marking', MARKINGS], ['hem', HEMS], ['stance', STANCES], ['arms', ARMS], ['expression', EXPRESSIONS]]) {
+for (const [key, list] of [['hat', HATS], ['glasses', GLASSES], ['marking', MARKINGS], ['expression', EXPRESSIONS]]) {
   if (list.some(row => row.id === params.get(key))) ghost.setTraits({ [key]: params.get(key) });
 }
 if (!compatible(ghost.traits.hat, ghost.traits.glasses)) ghost.setTraits({ glasses: 'none' });

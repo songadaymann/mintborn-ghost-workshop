@@ -1,13 +1,12 @@
 import * as THREE from 'three';
-import { addIllustratedCloth, makeContour } from './illustrated-material.js?v=tailored-06c';
+import { addIllustratedCloth, makeContour } from './illustrated-material.js?v=classic-body-01';
 import { makeMarkings } from './markings.js';
-import { buildHat, buildGlasses } from './accessories.js?v=tailored-06c';
-import { BODY_DEFAULTS, bodyParams, bodySurface, headTransform } from './body.js?v=ghost-v4a';
-import { buildFace, dotEyes } from './faces.js?v=ghost-v4a';
-import { makeFabricPrint, PRINT_FINISHES } from './fabrics.js?v=ghost-v4a';
+import { buildHat, buildGlasses } from './accessories.js?v=classic-body-01';
+import { BODY_DEFAULTS, classicBody, bodyParams, bodySurface, headTransform } from './body.js?v=classic-body-01';
+import { buildFace, dotEyes } from './faces.js?v=classic-body-01';
+import { makeFabricPrint, PRINT_FINISHES } from './fabrics.js?v=classic-body-01';
 
-// One canonical topology and fold layout. v4 body traits (hem, stance, arms) reshape the
-// skirt from continuous functions in body.js; the head and default body are unchanged.
+// One approved sheet-01 topology and fold layout for every look.
 export const SHAPE = Object.freeze({ crownY: 1.9, headRadius: .49, hemY: .24, capFraction: .26 });
 export const QUALITY = Object.freeze({ portrait: [96, 58], town: [40, 28] });
 export const DEFAULT_TRAITS = Object.freeze({ version: 3, body: 'sheet-01', finish: 'cotton', pattern: 'solid', colors: ['#f7f3e9', '#9272de', '#efb58a'], hat: 'none', glasses: 'none', marking: 'none', ...BODY_DEFAULTS, expression: 'dots', markColor: '#657773', markScale: 1, accessoryColor: '#35433b', trimColor: '#d9c593' });
@@ -206,7 +205,7 @@ export class Ghost {
 
   setTraits(patch) {
     const previousFinish=this.traits.finish;
-    Object.assign(this.traits, patch);
+    Object.assign(this.traits, classicBody(patch));
     const finish=this.traits.finish??'cotton',opal=finish==='opal',gold=finish==='gold';
     this.material.roughness=opal?.42:gold?.50:finish==='jet'?.83:.93;
     this.material.metalness=gold?.68:opal?.12:0;

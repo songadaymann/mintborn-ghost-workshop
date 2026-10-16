@@ -1,14 +1,15 @@
-// Ghost catalog v4 (2026-09-28): body shape, expression and more cloth, layered on the
+// Ghost catalog v4: expanded expressions and cloth on the original body, layered on the
 // v3 draft. catalog.js and collection/recipes.json (ghost-textiles-03) stay untouched;
 // v4 writes collection/v4/. Draft art distribution, not committed mint metadata.
 //
 // Each token N keeps its v3 hat, eyewear, marking and hat colour. New traits come from a
 // per-token stream seeded by (seed, N), so any single ghost can be regenerated from its
 // ID alone. Only the exact rare-cloth quotas use a seeded collection-wide shuffle.
+import { classicBody } from './body.js';
 import { HATS, GLASSES, MARKINGS, COLOR_FAMILIES as V3_FAMILIES, PALETTES as V3_PALETTES, RARE_FABRICS as V3_RARE,
   generateCollection, random, labelFor, compatible } from './catalog.js';
 
-export const CATALOG_V4_VERSION = 'ghost-textiles-04';
+export const CATALOG_V4_VERSION = 'ghost-textiles-04-classic-body';
 export const V4_SEED = 28092026;
 const list = rows => rows.map(([id, label, weight = 1]) => ({ id, label, weight }));
 
@@ -144,7 +145,8 @@ export function rareSlotsV4(seed = V4_SEED, v3 = generateCollection()) {
   return slots;
 }
 
-export function generateCollectionV4(seed = V4_SEED, v3Seed = 9082026) {
+// Retain the original draft selection stream so restoring the body never rerolls other traits.
+function generateDraftWithBodies(seed = V4_SEED, v3Seed = 9082026) {
   const v3 = generateCollection(v3Seed), slots = rareSlotsV4(seed, v3), used = new Set();
   return v3.map(base => {
     for (let attempt = 0; attempt < 50; attempt++) {
@@ -159,8 +161,9 @@ export function generateCollectionV4(seed = V4_SEED, v3Seed = 9082026) {
   });
 }
 
-export function framingV4(t) {
-  const up = { tall: .26, short: -.26 }[t.stance] ?? 0;
-  return up;
+// Preserve every numbered ghost's new cloth, face and accessories; only restore its body.
+export function generateCollectionV4(seed = V4_SEED, v3Seed = 9082026) {
+  return generateDraftWithBodies(seed, v3Seed).map(classicBody);
 }
+export function framingV4() { return 0; }
 export { HATS, GLASSES, MARKINGS, labelFor, compatible };

@@ -1,15 +1,15 @@
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
-import { Ghost } from './ghost.js?v=tailored-06c';
-import { ACCESSORY_ART_VERSION } from './accessories.js?v=tailored-06c';
-import { HATS, GLASSES, MARKINGS, labelFor, compatible, hatFraming } from './catalog.js?v=tailored-06c';
+import { Ghost } from './ghost.js?v=classic-body-01';
+import { ACCESSORY_ART_VERSION } from './accessories.js?v=classic-body-01';
+import { HATS, GLASSES, MARKINGS, labelFor, compatible, hatFraming } from './catalog.js?v=classic-body-01';
 // v4 by default (collection/v4/); ?v=3 browses the untouched v3 draft (collection/recipes.json).
 import { PALETTES_V4 as PALETTES, COLOR_FAMILIES_V4 as COLOR_FAMILIES, recipeFromPaletteV4 as recipeFromPalette, RARE_FABRICS_V4 as RARE_FABRICS,
-  CATALOG_V4_VERSION, HEMS, STANCES, ARMS, EXPRESSIONS, framingV4 } from './catalog-v4.js?v=ghost-v4a';
+  CATALOG_V4_VERSION, EXPRESSIONS, framingV4 } from './catalog-v4.js?v=classic-body-01';
 const V3 = new URLSearchParams(location.search).get('v') === '3';
 const BODY_DEFAULTS = { hem: 'classic', stance: 'regular', arms: 'none', expression: 'dots' };
-import { EXPANDED_HATS, EXPANDED_GLASSES } from './accessories-expanded.js?v=tailored-06c';
-import { orderByVisualSimilarity } from './collection-order.js?v=tailored-06c';
+import { EXPANDED_HATS, EXPANDED_GLASSES } from './accessories-expanded.js?v=classic-body-01';
+import { orderByVisualSimilarity } from './collection-order.js?v=classic-body-01';
 
 export const DEBUG_OPTIONS = { catalogAudit: true };
 const $ = id => document.getElementById(id), pageSize = 24, width = 320, height = 400;
@@ -60,7 +60,7 @@ $('catalog-count').textContent=`${HATS.length-1} hats, ${GLASSES.length-1} eyewe
 
 function draw(recipe) {
   ghost.setTraits(recipe); ghost.resetMotion(); ghost.update(2, 0, zero, 1);
-  const extra = hatFraming(recipe.hat) + Math.max(0, framingV4(recipe)) + (recipe.hem === 'long_drape' ? .04 : 0);
+  const extra = hatFraming(recipe.hat) + Math.max(0, framingV4(recipe));
   const close=$('detail').checked;
   const half = close ? (recipe.hat==='deerstalker'?1.35:['witch','wizard','cowboy','tricorne','umbrella'].includes(recipe.hat)?1.13:recipe.glasses==='flip_up'?1.04:.92) : (2.05 + extra) * .91 / (width / height);
   camera.left = -half * width / height; camera.right = half * width / height;
@@ -93,12 +93,11 @@ function caption(recipe) {
 function description(recipe) {
   return [labelFor(PALETTES, recipe.palette), recipe.hat === 'none' ? null : labelFor(HATS, recipe.hat),
     recipe.glasses === 'none' ? null : labelFor(GLASSES, recipe.glasses), labelFor(MARKINGS, recipe.marking),
-    recipe.hem === 'classic' ? null : labelFor(HEMS, recipe.hem), recipe.stance === 'regular' ? null : labelFor(STANCES, recipe.stance),
-    recipe.arms === 'none' ? null : labelFor(ARMS, recipe.arms), recipe.expression === 'dots' ? null : labelFor(EXPRESSIONS, recipe.expression)].filter(Boolean).join(' · ');
+    recipe.expression === 'dots' ? null : labelFor(EXPRESSIONS, recipe.expression)].filter(Boolean).join(' · ');
 }
 function filtered() {
   const source = order === 'similar' ? similarRecipes : recipes;
-  let result = source.filter(r => ['hat', 'glasses', 'marking', 'palette', 'hem', 'expression'].every(key => !$(key).value || r[key === 'palette' ? 'paletteFamily' : key] === $(key).value));
+  let result = source.filter(r => ['hat', 'glasses', 'marking', 'palette', 'expression'].every(key => !$(key).value || r[key === 'palette' ? 'paletteFamily' : key] === $(key).value));
   if (order === 'mixed') result = result.map(r => ({ r, key: ((r.number + mixOffset) * 7919) % 10007 })).sort((a, b) => a.key - b.key).map(x => x.r);
   return result;
 }
@@ -129,7 +128,7 @@ async function paint() {
   $('status').textContent = all.length ? `${page * pageSize + 1}–${Math.min((page + 1) * pageSize, all.length)} of ${all.length.toLocaleString()} ${sheet ? 'trait studies' : 'ghosts'}` : 'No ghosts match these filters.';
   $('export-sheet').disabled = !visible.length;
 }
-for (const [id, catalog] of [['hat', HATS], ['glasses', GLASSES], ['marking', MARKINGS], ['palette', COLOR_FAMILIES], ['hem', HEMS], ['expression', EXPRESSIONS]]) {
+for (const [id, catalog] of [['hat', HATS], ['glasses', GLASSES], ['marking', MARKINGS], ['palette', COLOR_FAMILIES], ['expression', EXPRESSIONS]]) {
   for (const row of [{ id: '', label: 'All' }, ...catalog]) {
     const option = document.createElement('option'); option.value = row.id; option.textContent = row.label; $(id).append(option);
   }
@@ -141,7 +140,7 @@ $('next').addEventListener('click', () => { page++; paint(); });
 $('similar').addEventListener('click', () => { sheet = null; setOrder('similar'); page = 0; paint(); });
 $('sample').addEventListener('click', () => { sheet = null; setOrder('mixed'); mixOffset += 193; page = 0; paint(); });
 $('clear').addEventListener('click', () => {
-  ['hat', 'glasses', 'marking', 'palette', 'hem', 'expression'].forEach(key => $(key).value = ''); sheet = null; page = 0; paint();
+  ['hat', 'glasses', 'marking', 'palette', 'expression'].forEach(key => $(key).value = ''); sheet = null; page = 0; paint();
 });
 $('open').addEventListener('click', () => {
   if ($('number').reportValidity()) location.href = (V3 ? './collection.html?v=3&ghost=' : './?ghost=') + Math.max(1, Math.min(10000, Math.floor(Number($('number').value) || 1)));
